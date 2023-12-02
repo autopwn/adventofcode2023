@@ -31,12 +31,14 @@ fn find_digits(line: &str, digit_words: &[&str]) -> (u32, u32) {
 fn part1() -> u32 {
     aoc_utils::read_strings("example_part1.txt")
         .map(|line| {
-            let digits: Vec<char> = line
-                .unwrap()
+            let line = line.unwrap();
+            let mut digits = line
                 .chars()
-                .filter(|c| c.is_ascii_digit())
-                .collect();
-            format!("{}{}", digits.first().unwrap(), digits.last().unwrap())
+                .filter(|c| c.is_ascii_digit());
+            let first = digits.next().unwrap();
+            // edge case when there is only one digit in the line
+            let last = digits.last().unwrap_or(first);
+            format!("{}{}", first, last)
                 .parse::<u32>()
                 .unwrap()
         })
