@@ -7,7 +7,7 @@ if [ ! -d "$DAY_FOLDER" ]; then
     cargo new $DAY_FOLDER
     rm -rf $DAY_FOLDER/.git
     cat template.rs > $DAY_FOLDER/src/main.rs
-    echo 'aoc_utils = { path = "$HOME/git/aoc/aoc_utils" }' >> $DAY_FOLDER/Cargo.toml
+    echo 'aoc_utils = { path = "../../aoc_utils" }' >> $DAY_FOLDER/Cargo.toml
     touch $DAY_FOLDER/example_part1.txt
     touch $DAY_FOLDER/example_part2.txt
 fi
