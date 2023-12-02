@@ -29,33 +29,30 @@ fn find_digits(line: &str, digit_words: &[&str]) -> (u32, u32) {
 }
 
 fn part1() -> u32 {
-    let mut sum = 0;
-    for line in aoc_utils::read_strings("example_part1.txt") {
-        let digits: Vec<char> = line
-            .unwrap()
-            .chars()
-            .filter(|c| c.is_ascii_digit())
-            .collect();
-        let calibration_value: u32 =
+    aoc_utils::read_strings("example_part1.txt")
+        .map(|line| {
+            let digits: Vec<char> = line
+                .unwrap()
+                .chars()
+                .filter(|c| c.is_ascii_digit())
+                .collect();
             format!("{}{}", digits.first().unwrap(), digits.last().unwrap())
-                .parse()
-                .unwrap();
-        sum += calibration_value;
-    }
-    sum
+                .parse::<u32>()
+                .unwrap()
+        })
+        .sum()
 }
 
 fn part2() -> u32 {
     let digit_words: Vec<&str> = vec![
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
     ];
-    let mut sum = 0;
-    for line in aoc_utils::read_strings("example_part2.txt") {
-        let (first, last) = find_digits(&line.unwrap(), &digit_words);
-        let calibration_value: u32 = format!("{}{}", first, last).parse().unwrap();
-        sum += calibration_value;
-    }
-    sum
+    aoc_utils::read_strings("example_part2.txt")
+        .map(|line| {
+            let (first, last) = find_digits(&line.unwrap(), &digit_words);
+            format!("{}{}", first, last).parse::<u32>().unwrap()
+        })
+        .sum()
 }
 
 fn main() {
