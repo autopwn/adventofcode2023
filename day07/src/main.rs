@@ -79,17 +79,74 @@ impl Hand {
         let hand_type = if char_counts.values().any(|&count| count == 5) {
             HandType::FiveOfAKind
         } else if char_counts.values().any(|&count| count == 4) {
-            HandType::FourOfAKind
+            if use_joker && char_counts.iter().any(|card| *card.0 == 'J') {
+                HandType::FiveOfAKind
+            } else {
+                HandType::FourOfAKind
+            }
         } else if char_counts.values().any(|&count| count == 3)
             && char_counts.values().any(|&count| count == 2)
         {
-            HandType::FullHouse
+            if use_joker && char_counts.iter().any(|card| *card.0 == 'J') {
+                HandType::FiveOfAKind
+            } else {
+                HandType::FullHouse
+            }
         } else if char_counts.values().any(|&count| count == 3) {
-            HandType::ThreeOfAKind
+            if use_joker {
+                if char_counts
+                    .iter()
+                    .filter(|card| *card.1 == 3)
+                    .any(|card| *card.0 == 'J')
+                    || char_counts
+                        .iter()
+                        .filter(|card| *card.1 != 3)
+                        .any(|card| *card.0 == 'J')
+                {
+                    HandType::FourOfAKind
+                } else {
+                    HandType::ThreeOfAKind
+                }
+            } else {
+                HandType::ThreeOfAKind
+            }
         } else if char_counts.values().filter(|&count| *count == 2).count() == 2 {
-            HandType::TwoPair
+            if use_joker {
+                if char_counts
+                    .iter()
+                    .filter(|card| *card.1 == 2)
+                    .any(|card| *card.0 == 'J')
+                {
+                    HandType::FourOfAKind
+                } else if char_counts.iter().any(|card| *card.0 == 'J') {
+                    HandType::FullHouse
+                } else {
+                    HandType::TwoPair
+                }
+            } else {
+                HandType::TwoPair
+            }
         } else if char_counts.values().any(|&count| count == 2) {
-            HandType::OnePair
+            if use_joker {
+                if char_counts
+                    .iter()
+                    .filter(|card| *card.1 == 2)
+                    .any(|card| *card.0 == 'J')
+                    || char_counts.iter().any(|card| *card.0 == 'J')
+                {
+                    HandType::ThreeOfAKind
+                } else {
+                    HandType::OnePair
+                }
+            } else {
+                HandType::OnePair
+            }
+        } else if use_joker {
+            if char_counts.iter().any(|card| *card.0 == 'J') {
+                HandType::OnePair
+            } else {
+                HandType::HighCard
+            }
         } else {
             HandType::HighCard
         };
@@ -128,8 +185,7 @@ fn part2(input: &str) -> u64 {
 }
 
 fn main() {
-    //let input = std::fs::read_to_string("input.txt").unwrap();
-    let input = std::fs::read_to_string("example.txt").unwrap();
+    let input = std::fs::read_to_string("input.txt").unwrap();
     println!("Solution of part 1 {}", part1(&input));
     println!("Solution of part 2 {}", part2(&input));
 }
