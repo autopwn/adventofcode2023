@@ -93,20 +93,8 @@ impl Hand {
                 HandType::FullHouse
             }
         } else if char_counts.values().any(|&count| count == 3) {
-            if use_joker {
-                if char_counts
-                    .iter()
-                    .filter(|card| *card.1 == 3)
-                    .any(|card| *card.0 == 'J')
-                    || char_counts
-                        .iter()
-                        .filter(|card| *card.1 != 3)
-                        .any(|card| *card.0 == 'J')
-                {
-                    HandType::FourOfAKind
-                } else {
-                    HandType::ThreeOfAKind
-                }
+            if use_joker && char_counts.iter().any(|card| *card.0 == 'J') {
+                HandType::FourOfAKind
             } else {
                 HandType::ThreeOfAKind
             }
@@ -127,26 +115,13 @@ impl Hand {
                 HandType::TwoPair
             }
         } else if char_counts.values().any(|&count| count == 2) {
-            if use_joker {
-                if char_counts
-                    .iter()
-                    .filter(|card| *card.1 == 2)
-                    .any(|card| *card.0 == 'J')
-                    || char_counts.iter().any(|card| *card.0 == 'J')
-                {
-                    HandType::ThreeOfAKind
-                } else {
-                    HandType::OnePair
-                }
+            if use_joker && char_counts.iter().any(|card| *card.0 == 'J') {
+                HandType::ThreeOfAKind
             } else {
                 HandType::OnePair
             }
-        } else if use_joker {
-            if char_counts.iter().any(|card| *card.0 == 'J') {
-                HandType::OnePair
-            } else {
-                HandType::HighCard
-            }
+        } else if use_joker && char_counts.iter().any(|card| *card.0 == 'J') {
+            HandType::OnePair
         } else {
             HandType::HighCard
         };
@@ -160,25 +135,13 @@ impl Hand {
     }
 }
 
-fn part1(input: &str) -> u64 {
+fn calculate_winnings(input: &str, use_joker: bool) -> u64 {
     let mut hands: Vec<_> = input
         .trim()
         .split('\n')
-        .map(|h| Hand::new(h, false))
+        .map(|h| Hand::new(h, use_joker))
         .collect::<Vec<_>>();
-    hands.sort();
-    hands.iter().enumerate().fold(0, |acc, (index, hand)| {
-        acc + ((index + 1) as u64) * hand.bid as u64
-    })
-}
-
-fn part2(input: &str) -> u64 {
-    let mut hands: Vec<_> = input
-        .trim()
-        .split('\n')
-        .map(|h| Hand::new(h, true))
-        .collect();
-    hands.sort();
+    hands.sort(); // Implementation of Ord trait does the job
     hands.iter().enumerate().fold(0, |acc, (index, hand)| {
         acc + ((index + 1) as u64) * hand.bid as u64
     })
@@ -186,6 +149,6 @@ fn part2(input: &str) -> u64 {
 
 fn main() {
     let input = std::fs::read_to_string("input.txt").unwrap();
-    println!("Solution of part 1 {}", part1(&input));
-    println!("Solution of part 2 {}", part2(&input));
+    println!("Solution of part 1 {}", calculate_winnings(&input, false));
+    println!("Solution of part 2 {}", calculate_winnings(&input, true));
 }
