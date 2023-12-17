@@ -1,6 +1,6 @@
 #/usr/bin/env bash
 
-DAY_FOLDER="day$(date +%d)"
+DAY_FOLDER="${DAY_FOLDER:-day$(date +%d)}"
 
 if [ ! -d "$DAY_FOLDER" ]; then
     echo "Creating $DAY_FOLDER"
